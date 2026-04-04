@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/thebe_protocol_logo.png" alt="Thebe Protocol - The Agentic Guardian" width="300"/>
+</p>
+
 # Zero-Trust Agentic Guardian Architecture
 
 A comprehensive multi-agent system implementing zero-trust security principles for executing user-requested tasks through a cryptographically verified authorization chain.
