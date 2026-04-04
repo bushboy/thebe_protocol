@@ -247,9 +247,15 @@ The system detects prompt injection through:
 
 ## Documentation
 
-- [Requirements Document](.kiro/specs/zero-trust-agentic-guardian/requirements.md)
-- [Design Document](.kiro/specs/zero-trust-agentic-guardian/design.md)
-- [Implementation Tasks](.kiro/specs/zero-trust-agentic-guardian/tasks.md)
+- [Project Structure](docs/implementation/PROJECT_STRUCTURE.md)
+- [Agno Integration](docs/agno_integration.md)
+- [Configuration Utilities](docs/configuration_utilities.md)
+- [Identity Abstraction Layer Architecture](docs/identity-abstraction-layer/architecture.md)
+- [Identity Abstraction Layer API Reference](docs/identity-abstraction-layer/api-reference.md)
+- [Identity Abstraction Layer Configuration](docs/identity-abstraction-layer/configuration.md)
+- [Adapter Development](docs/identity-abstraction-layer/adapter-development.md)
+- [Sequence Diagrams](docs/identity-abstraction-layer/sequence-diagrams.md)
+- [Troubleshooting](docs/identity-abstraction-layer/troubleshooting.md)
 
 ## Contributing
 
@@ -261,8 +267,9 @@ The system detects prompt injection through:
 
 ## License
 
-[Specify your license here]
+See [LICENSE](LICENSE).
 
 ## Contact
 
-[Specify contact information here]
+- GitHub: [bushboy](https://github.com/bushboy)
+- Email: [info@delegant.co.za](mailto:info@delegant.co.za)
