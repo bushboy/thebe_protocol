@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\shared\identity\config_parser.py
+# hypothesis_version: 6.151.9
+
+['.json', '.yaml', '.yml']

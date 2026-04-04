@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\services\executor\provider_executor.py
+# hypothesis_version: 6.151.9
+
+['action', 'all', 'base', 'blocks', 'body', 'branch_name', 'channel', 'channels', 'count', 'create_branch', 'create_doc', 'create_pr', 'desc', 'description', 'direction', 'full_name', 'github', 'google_workspace', 'head', 'id', 'is_private', 'limit', 'list_channels', 'list_repos', 'main', 'message', 'name', 'num_members', 'placeholder', 'pr_number', 'pr_url', 'private', 'public_channel', 'repositories', 'repository', 'send_email', 'send_message', 'sha', 'slack', 'sort', 'source_branch', 'state', 'status', 'text', 'timestamp', 'title', 'ts', 'type', 'types', 'updated', 'url']

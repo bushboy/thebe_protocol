@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\services\permission_broker\audit_logger.py
+# hypothesis_version: 6.151.9
+
+[5.0, 200, 201, 'Content-Type', 'action', 'action_metadata', 'additional_context', 'application/json', 'component', 'dpop_fingerprint', 'event_type', 'expires_at', 'failure_reason', 'failure_type', 'permission-broker', 'plan_id', 'provider', 'task_id', 'timestamp', 'unknown', 'zt_at', 'ztat_nonce']

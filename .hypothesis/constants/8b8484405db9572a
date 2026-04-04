@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\AppData\Roaming\Python\Python313\site-packages\s3transfer\__init__.py
+# hypothesis_version: 6.151.9
+
+[100, 1024, 8192, '/', '0.16.0', 'ACL', 'Amazon Web Services', 'Body', 'CacheControl', 'ContentDisposition', 'ContentEncoding', 'ContentLanguage', 'ContentLength', 'ContentType', 'ETag', 'Expires', 'GrantFullControl', 'GrantRead', 'GrantReadACP', 'GrantWriteACL', 'Metadata', 'PartNumber', 'Parts', 'PutObject', 'RequestPayer', 'SSECustomerAlgorithm', 'SSECustomerKey', 'SSECustomerKeyMD5', 'SSEKMSKeyId', 'ServerSideEncryption', 'StorageClass', 'Tagging', 'UploadId', 'UploadPart', 'VersionId', 'before-call.s3.*', 'checksum', 'context', 'disable_callback', 'enable_callback', 'header', 'in', 'rb', 'request-created.s3', 'request_algorithm', 'wb']

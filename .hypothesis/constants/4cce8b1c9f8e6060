@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\shared\identity\retry.py
+# hypothesis_version: 6.151.9
+
+[0.1, 1.0, 10.0, 400, 500, 600, 'attempt', 'attempts', 'delay', 'error', 'error_type', 'function', 'max_attempts', 'network_error', 'provider_error', 'server_error_5xx', 'total_attempts']

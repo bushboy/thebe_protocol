@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\shared\jwt\validator.py
+# hypothesis_version: 6.151.9
+
+[300, 'RS256', 'iat', 'jti']

@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\AppData\Roaming\Python\Python313\site-packages\sqlalchemy\orm\mapped_collection.py
+# hypothesis_version: 6.151.9
+
+['_KT', '_VT', 'attr_name', 'colkeys', 'cols', 'composite', 'getter', 'mapping_spec', 'metadata', 'unknown relationship']

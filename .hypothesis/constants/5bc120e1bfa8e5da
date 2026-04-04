@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\shared\dpop\proof.py
+# hypothesis_version: 6.151.9
+
+['RS256', 'ath', 'dpop+jwt', 'htm', 'htu', 'iat', 'jti', 'typ', 'verify_exp']

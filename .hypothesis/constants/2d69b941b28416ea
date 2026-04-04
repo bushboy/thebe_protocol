@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\services\audit\hash_chain.py
+# hypothesis_version: 6.151.9
+
+[',', ':', 'Empty chain is valid', 'action_metadata', 'component', 'dpop_fingerprint', 'event_type', 'hash', 'log_id', 'previous_hash', 'timestamp', 'utf-8', 'zt_at']

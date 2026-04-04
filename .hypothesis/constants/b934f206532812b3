@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\shared\errors\middleware.py
+# hypothesis_version: 6.151.9
+
+['Validation error', 'X-Correlation-ID', 'correlation_id', 'detail', 'details', 'error', 'error_code', 'error_type', 'errors', 'http', 'http_error', 'internal_error', 'message', 'method', 'path', 'status_code', 'traceback', 'validation_error']

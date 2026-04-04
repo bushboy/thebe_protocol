@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\services\planner\intent_engine_client.py
+# hypothesis_version: 6.151.9
+
+[30.0, 'Authorization', 'Content-Type', 'DPoP', 'POST', 'allowed_actions', 'application/json', 'intent_signature', 'proposed_action', 'r', 'user_goal']

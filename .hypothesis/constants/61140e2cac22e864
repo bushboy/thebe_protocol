@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\shared\errors\exceptions.py
+# hypothesis_version: 6.151.9
+
+[401, 403, 409, 500, 502, 503, 'Token has expired', 'action_not_allowed', 'correlation_id', 'intent_misaligned', 'internal_error', 'invalid_certificate', 'invalid_dpop', 'invalid_signature', 'invalid_token', 'policy', 'policy_denied', 'provider', 'provider_error', 'service', 'service_unavailable', 'similarity_score', 'token_expired', 'token_reused']

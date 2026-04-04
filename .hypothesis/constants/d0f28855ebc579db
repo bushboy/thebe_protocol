@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\scripts\migrate_ial_config.py
+# hypothesis_version: 6.151.9
+
+[10.0, '\nNext steps:', '#', '%Y%m%d_%H%M%S', '--dry-run', '--no-backup', '=', 'AUTH0_AUDIENCE', 'AUTH0_CLIENT_ID', 'AUTH0_CLIENT_SECRET', 'AUTH0_DOMAIN', 'IAL_AUTH0_CLIENT_ID', 'IAL_AUTH0_DOMAIN', 'IAL_AUTH0_TIMEOUT', 'IDENTITY_PROVIDER', '__main__', 'auth0', 'auth0_audience', 'auth0_client_id', 'auth0_client_secret', 'auth0_config', 'auth0_domain', 'client_id', 'client_secret', 'config_file', 'domain', 'identity_provider', 'r', 'store_true', 'timeout', 'token_vault_url', 'w']

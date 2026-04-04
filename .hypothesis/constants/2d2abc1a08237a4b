@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\shared\identity\config_models.py
+# hypothesis_version: 6.151.9
+
+[10.0, 'AWS region', 'Auth0 configuration', 'Auth0 domain', 'Client ID', 'Client secret', 'DynamoDB table name', 'IALConfig', 'Keycloak realm name', 'Keycloak server URL', 'Secret name prefix', 'after', 'auth0', 'aws_secrets', 'client_id', 'client_secret', 'domain', 'http://', 'https://', 'keycloak', 'realm', 'region', 'scope_mapping', 'secret_name_prefix', 'server_url', 'session_table_name', 'timeout', 'token_vault_url']

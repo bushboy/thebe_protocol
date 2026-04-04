@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\AppData\Roaming\Python\Python313\site-packages\prometheus_client\metrics.py
+# hypothesis_version: 6.151.9
+
+[0.0, 0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1.0, 2.5, 5.0, 7.5, 10.0, 128, '1', 'F', 'False', 'MetricWrapperBase', 'T', '_', '_bucket', '_count', '_created', '_info', '_sum', '_total', 'all', 'buckets', 'counter', 'gauge', 'histogram', 'info', 'le', 'liveall', 'livemax', 'livemin', 'livemostrecent', 'livesum', 'max', 'min', 'mostrecent', 'multiprocess_mode', 'observe', 'quantile', 'set', 'states', 'stateset', 'sum', 'summary', 't', 'true']

@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\AppData\Roaming\Python\Python313\site-packages\boto3\dynamodb\types.py
+# hypothesis_version: 6.151.9
+
+[-128, 126, ', ', 'B', 'BOOL', 'BS', 'Infinity', 'L', 'M', 'N', 'NS', 'NULL', 'NaN', 'S', 'SS']

@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\shared\errors\__init__.py
+# hypothesis_version: 6.151.9
+
+['AuditIntegrityError', 'AuthenticationError', 'AuthorizationError', 'ExecutionError', 'InternalError', 'InvalidDPoPError', 'InvalidTokenError', 'PolicyDeniedError', 'ProviderAPIError', 'RetryContext', 'SystemError', 'TokenExpiredError', 'ZTATReplayError', 'setup_error_handlers']

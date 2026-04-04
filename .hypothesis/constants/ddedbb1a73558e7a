@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\shared\scopes\categorizer.py
+# hypothesis_version: 6.151.9
+
+['admin:org', 'channels:manage', 'channels:read', 'chat:write', 'delete_repo', 'github', 'google_workspace', 'groups:read', 'groups:write', 'invalid', 'org:read', 'read_only', 'repo:read', 'repo:write', 'slack', 'user:read', 'users:read', 'write_action']

@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\services\safety_agent\config.py
+# hypothesis_version: 6.151.9
+
+[5.0, 8002, '.env', '0.0.0.0', 'https://audit:8005', 'safety-agent', 'utf-8']

@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\shared\config\parser.py
+# hypothesis_version: 6.151.9
+
+[2048, 'Auth0 client ID', 'Auth0 client secret', 'Auth0 domain', 'Configuration notes', 'Connection options', 'DPoP key identifier', 'Enabled client IDs', 'Provider name', 'Scope categorization', 'Token Vault status', 'auth0_domain', 'client_id', 'client_secret', 'dpop_key_id', 'jwks_uri', 'r', 'rb', 'services', 'version']

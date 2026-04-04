@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\AppData\Roaming\Python\Python313\site-packages\botocore\validate.py
+# hypothesis_version: 6.151.9
+
+[', ', '-inf', '.', 'boolean', 'document', 'double', 'empty input', 'file-like object', 'float', 'hostLabel', 'input', 'integer', 'invalid length', 'invalid range', 'invalid type', 'list', 'long', 'map', 'members', 'min', 'min_allowed', 'more than one input', 'param', 'read', 'required', 'serialization', 'string', 'structure', 'timestamp-string', 'type_error', 'union', 'unknown field', 'unknown_param', 'valid_names', 'valid_types']

@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\AppData\Roaming\Python\Python313\site-packages\jwt\__init__.py
+# hypothesis_version: 6.151.9
+
+['2.8.0', 'DecodeError', 'InvalidAudienceError', 'InvalidIssuedAtError', 'InvalidIssuerError', 'InvalidKeyError', 'InvalidTokenError', 'José Padilla', 'MIT', 'PyJWK', 'PyJWKClient', 'PyJWKClientError', 'PyJWKError', 'PyJWKSet', 'PyJWKSetError', 'PyJWS', 'PyJWT', 'PyJWTError', 'decode', 'encode', 'hello@jpadilla.com', 'register_algorithm', 'unregister_algorithm']

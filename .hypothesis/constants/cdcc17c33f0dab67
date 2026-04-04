@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\services\permission_broker\rar_constructor.py
+# hypothesis_version: 6.151.9
+
+['*', 'action', 'action_params', 'channel', 'create_branch', 'create_channel', 'create_doc', 'create_pr', 'delete', 'delete_branch', 'delete_channel', 'delete_repo', 'delete_user', 'destroy', 'domain', 'get', 'get_channel', 'get_repo', 'github', 'gmail', 'google_workspace', 'https://github.com/*', 'intent_hash', 'invalid', 'list', 'list_channels', 'list_emails', 'list_repos', 'merge_pr', 'organization', 'plan_id', 'provider', 'read', 'read_email', 'remove', 'repository', 'resource_type', 'send_email', 'send_message', 'slack', 'task_execution', 'task_id', 'view', 'workspace']

@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\AppData\Roaming\Python\Python313\site-packages\sqlalchemy\orm\state.py
+# hypothesis_version: 6.151.9
+
+['2.0', '__dict__', '__weakref__', '_pending_mutations', 'added_items', 'callables', 'class_', 'committed_state', 'deleted_items', 'expired', 'expired_attributes', 'info', 'instance', 'key', 'load_options', 'load_path', 'manager', 'modified', 'obj', 'parents', 'state']

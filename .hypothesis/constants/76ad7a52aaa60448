@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\AppData\Roaming\Python\Python313\site-packages\sqlalchemy\sql\traversals.py
+# hypothesis_version: 6.151.9
+
+[',\n', '__clause_element__', '_annotations', '_traverse_internals', 'anon_map', 'cache', 'callable', 'clauses', 'compare_%s', 'compare_annotations', 'compare_keys', 'compare_values', 'is_clause_element', 'key', 'left', 'negate', 'operator', 'plugin_subject', 'right', 'skip_traverse', 'stack', 'use_proxies', 'value']

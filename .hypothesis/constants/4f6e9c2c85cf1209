@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\shared\identity\metrics.py
+# hypothesis_version: 6.151.9
+
+[0.1, 0.5, 1.0, 2.0, 5.0, 10.0, 30.0, 60.0, 'duration_seconds', 'error', 'exchange_token', 'failure', 'get_token', 'operation', 'provider_type', 'revoke_session', 'status', 'success']

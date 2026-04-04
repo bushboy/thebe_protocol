@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\AppData\Roaming\Python\Python313\site-packages\redis\utils.py
+# hypothesis_version: 6.151.9
+
+[100, 1000, '*', '.', '...', '99.99.99', 'C', 'EX', 'EXAT', 'PX', 'PXAT', 'push_response', 'redis', 'replace', 'self', 'utf-8']

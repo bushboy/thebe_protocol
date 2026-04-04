@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\services\audit\chain_verifier.py
+# hypothesis_version: 6.151.9
+
+['action_metadata', 'broken_index', 'chain_valid', 'component', 'components', 'dpop_fingerprint', 'event_type', 'event_types', 'first_entry', 'first_hash', 'hash', 'json', 'last_entry', 'last_hash', 'log_id', 'previous_hash', 'tampered_indices', 'timestamp', 'total_entries', 'zt_at']

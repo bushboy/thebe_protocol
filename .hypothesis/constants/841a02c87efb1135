@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\services\permission_broker\config.py
+# hypothesis_version: 6.151.9
+
+[300, 8003, '.env', '0.0.0.0', 'https://audit:8005', 'permission-broker', 'utf-8']

@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\AppData\Roaming\Python\Python313\site-packages\sqlalchemy\orm\decl_api.py
+# hypothesis_version: 6.151.9
+
+['2.0', 'Base', 'NewType', '^__.+__$', '_T', '_TT', '__abstract__', '__class_getitem__', '__doc__', '__get__', '__init__', '__mapper__', '__mapper_cls__', '__table__', '__tablename__', '_sa_registry', 'class_registry', 'cls', 'dataclass_callable', 'eq', 'init', 'kw_only', 'mapper', 'match_args', 'metadata', 'name', 'order', 'pep-695 type', 'registry', 'repr', 'return', 'type_annotation_map', 'unsafe_hash']

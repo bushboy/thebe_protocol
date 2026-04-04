@@ -1,0 +1,42 @@
+# Intent Engine Service Dockerfile
+FROM python:3.14.2-slim
+
+# Harden Python runtime defaults
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create an unprivileged runtime user
+RUN groupadd --system app && useradd --system --gid app --create-home app
+
+# Copy requirements file
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy shared libraries
+COPY --chown=app:app shared/ ./shared/
+
+# Copy service code
+COPY --chown=app:app services/intent_engine/ ./services/intent_engine/
+
+# Set Python path
+ENV PYTHONPATH=/app
+
+# Drop root privileges before starting the service
+USER app
+
+# Expose service port
+EXPOSE 8001
+
+# Run the service
+CMD ["python", "-m", "uvicorn", "services.intent_engine.main:app", "--host", "0.0.0.0", "--port", "8001"]

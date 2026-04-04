@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\shared\audit\parser.py
+# hypothesis_version: 6.151.9
+
+[',', ':', 'action_metadata', 'component', 'dpop_fingerprint', 'event_type', 'genesis', 'hash', 'log_id', 'previous_hash', 'r', 'timestamp', 'zt_at']

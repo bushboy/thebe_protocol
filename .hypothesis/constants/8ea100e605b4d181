@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\AppData\Roaming\Python\Python313\site-packages\cryptography\x509\general_name.py
+# hypothesis_version: 6.151.9
+
+['ascii', 'value must be a Name', 'value must be string']

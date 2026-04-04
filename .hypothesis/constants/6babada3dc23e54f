@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\services\permission_broker\ztat_constructor.py
+# hypothesis_version: 6.151.9
+
+[',', ':', 'action', 'expires_at', 'intent_signature', 'isoformat', 'issued_at', 'nonce', 'plan_id', 'policy_approval', 'provider', 'rb', 'task_id', 'timestamp', 'utf-8']

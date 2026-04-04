@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\shared\identity\token_models.py
+# hypothesis_version: 6.151.9
+
+['Bearer', 'Granted scopes', 'ProviderToken', 'Token type', 'access_token', 'bearer', 'expires_in', 'refresh_token', 'scope', 'token_type']

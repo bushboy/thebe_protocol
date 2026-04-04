@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\services\permission_broker\token_vault_client.py
+# hypothesis_version: 6.151.9
+
+[5.0, 10.0, 200, 3600, 'Auth0 not configured', 'Bearer', 'Content-Type', 'access_token', 'actions', 'application/json', 'audience', 'client_credentials', 'client_id', 'client_secret', 'context', 'expires_in', 'github', 'google_workspace', 'grant_type', 'locations', 'purpose', 'scope', 'slack', 'token_type', 'type']

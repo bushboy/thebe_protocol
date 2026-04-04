@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\services\intent_engine\config.py
+# hypothesis_version: 6.151.9
+
+[0.7, 8001, '.env', '0.0.0.0', 'all-MiniLM-L6-v2', 'https://audit:8005', 'intent-engine', 'utf-8']

@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\shared\audit\pretty_printer.py
+# hypothesis_version: 6.151.9
+
+['  [Empty chain]', '...', '=', 'Audit Log Entry', 'Audit Log Sequence', 'Audit Log Summary', 'Audit Service', 'Executor Agent', 'Hash Chain:', 'Intent Engine', 'No audit log entries', 'Permission Broker', 'Planner Service', 'Safety Agent', 'audit', 'executor', 'genesis', 'intent-engine', 'permission-broker', 'planner', 'safety-agent']

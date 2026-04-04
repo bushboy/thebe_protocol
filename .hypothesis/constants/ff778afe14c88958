@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\AppData\Roaming\Python\Python313\site-packages\redis\_parsers\resp3.py
+# hypothesis_version: 6.151.9
+
+[b'!', b'#', b'$', b'%', b'(', b'*', b'+', b',', b'-', b':', b'=', b'>', b'_', b't', b'~', 'Push response: ', 'push_response', 'replace', 'utf-8']

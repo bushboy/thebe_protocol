@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\services\permission_broker\main.py
+# hypothesis_version: 6.151.9
+
+['/authorize', '/health', '1.0.0', 'Bearer', 'Granted scopes', 'INFO', 'Permission Broker', 'Token type', '__main__', 'authentication_error', 'degraded', 'error', 'gateway_timeout', 'healthy', 'identity_provider', 'internal_error', 'invalid_signature', 'main:app', 'message', 'provider_error', 'startup', 'timeout_error', 'unhealthy', 'unknown', 'validation_error']

@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\services\planner\middleware.py
+# hypothesis_version: 6.151.9
+
+['Authorization', 'Bearer ', 'DPoP', 'DPoP proof validated', 'Missing DPoP header', 'X-Client-Certificate', 'authenticated', 'certificate_identity', 'error', 'invalid_certificate', 'invalid_dpop', 'invalid_token', 'jwt_claims', 'message', 'r', 'sub', 'test_user', 'unknown', 'verify_signature']

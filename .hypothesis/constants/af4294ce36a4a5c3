@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\shared\config\pretty_printer.py
+# hypothesis_version: 6.151.9
+
+['\nScope Categories:', '\x1b[0m', '\x1b[92m', '\x1b[93m', '\x1b[94m', '\x1b[96m', '!=', '"([^"]*)"', '#(.*)$', ':=', '<', '<=', '=', '==', '>', '>=', 'Configuration Notes:', 'Status: EXPIRED', '[REDACTED]', '\\b', 'allow', 'api_key', 'as', 'client_secret', 'data', 'default', 'deny', 'else', 'import', 'input', 'not', 'package', 'password', 'private_key', 'r', 'rb', 'read_only', 'rule', 'secret', 'some', 'token', 'with', 'write_action']

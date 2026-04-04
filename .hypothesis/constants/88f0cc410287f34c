@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\shared\identity\auth0_adapter.py
+# hypothesis_version: 6.151.9
+
+[1.0, 5.0, 10.0, 200, 400, 401, 500, 3600, 'Bearer', 'Content-Type', 'Unknown client error', 'Unknown error', 'Unknown server error', 'access_token', 'actions', 'application/json', 'audience', 'auth0', 'client_credentials', 'client_id', 'client_secret', 'context', 'domain', 'error_description', 'exchange_token', 'expires_in', 'get_token', 'github', 'google_workspace', 'grant_type', 'locations', 'purpose', 'scope', 'slack', 'subject_token', 'subject_token_type', 'timeout', 'token', 'token_type', 'token_vault_url', 'type']

@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\shared\identity\aws_secrets_adapter.py
+# hypothesis_version: 6.151.9
+
+[1.0, 10.0, 3600, ':time', ':val', 'Bearer', 'Code', 'Error', 'Message', 'SecretString', 'Unknown', 'access_token', 'aws_secrets', 'created_at', 'dynamodb', 'expires_at', 'expires_in', 'provider', 'region', 'revoked', 'scope', 'secret_name_prefix', 'secretsmanager', 'session_id', 'session_table_name', 'timeout', 'token_type']

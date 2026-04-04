@@ -1,0 +1,389 @@
+services:
+  # PostgreSQL database for Audit Service
+  postgres:
+    image: postgres:15-alpine
+    container_name: ztag-postgres
+    environment:
+      POSTGRES_DB: audit_logs
+      POSTGRES_USER: audit_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ztag-internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U audit_user -d audit_logs"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis for Executor Agent token deduplication
+  redis:
+    image: redis:7-alpine
+    container_name: ztag-redis
+    command: redis-server --requirepass ${REDIS_PASSWORD:-changeme}
+    volumes:
+      - redis_data:/data
+    networks:
+      - ztag-internal
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # OPA Policy Engine
+  opa:
+    image: openpolicyagent/opa:latest
+    container_name: ztag-opa
+    command:
+      - "run"
+      - "--server"
+      - "--addr=0.0.0.0:8181"
+      - "/policies"
+    volumes:
+      - ../opa/policies:/policies:ro
+    networks:
+      - ztag-internal
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8181/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Intent Engine Service
+  intent-engine:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.intent-engine
+    container_name: ztag-intent-engine
+    environment:
+      # Service configuration
+      SERVICE_NAME: intent-engine
+      HOST: 0.0.0.0
+      PORT: 8001
+
+      # Auth0 configuration
+      AUTH0_DOMAIN: ${AUTH0_DOMAIN}
+      AUTH0_CLIENT_ID: ${INTENT_ENGINE_CLIENT_ID}
+      AUTH0_CLIENT_SECRET: ${INTENT_ENGINE_CLIENT_SECRET}
+      AUTH0_AUDIENCE: ${AUTH0_AUDIENCE}
+
+      # Model configuration
+      MODEL_NAME: all-MiniLM-L6-v2
+      SIMILARITY_THRESHOLD: 0.7
+
+      # Certificate paths (inside container)
+      MTLS_CA_CERT: /certs/root-ca/ca.crt
+      MTLS_CLIENT_CERT: /certs/intent-engine/client.crt
+      MTLS_CLIENT_KEY: /certs/intent-engine/client.key
+      MTLS_SERVER_CERT: /certs/intent-engine/server.crt
+      MTLS_SERVER_KEY: /certs/intent-engine/server.key
+
+      # DPoP key path
+      DPOP_PRIVATE_KEY_PATH: /keys/intent-engine-dpop.pem
+
+      # Logging
+      LOG_LEVEL: INFO
+    volumes:
+      - ../certificates:/certs:ro
+      - ../../keys:/keys:ro
+    networks:
+      - ztag-internal
+    depends_on:
+      - opa
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Planner Service
+  planner:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.planner
+    container_name: ztag-planner
+    environment:
+      # Service configuration
+      SERVICE_NAME: planner
+      HOST: 0.0.0.0
+      PORT: 8002
+
+      # Auth0 configuration
+      AUTH0_DOMAIN: ${AUTH0_DOMAIN}
+      AUTH0_CLIENT_ID: ${PLANNER_CLIENT_ID}
+      AUTH0_CLIENT_SECRET: ${PLANNER_CLIENT_SECRET}
+      AUTH0_AUDIENCE: ${AUTH0_AUDIENCE}
+
+      # Service URLs
+      INTENT_ENGINE_URL: http://intent-engine:8001
+      AUDIT_SERVICE_URL: http://audit:8006
+
+      # Certificate paths
+      MTLS_CA_CERT: /certs/root-ca/ca.crt
+      MTLS_CLIENT_CERT: /certs/planner/client.crt
+      MTLS_CLIENT_KEY: /certs/planner/client.key
+      MTLS_SERVER_CERT: /certs/planner/server.crt
+      MTLS_SERVER_KEY: /certs/planner/server.key
+
+      # DPoP key path
+      DPOP_PRIVATE_KEY_PATH: /keys/planner-dpop.pem
+
+      # Logging
+      LOG_LEVEL: INFO
+    volumes:
+      - ../certificates:/certs:ro
+      - ../../keys:/keys:ro
+    networks:
+      - ztag-internal
+    ports:
+      - "8002:8002"  # Expose planner for client /plan requests
+    depends_on:
+      - intent-engine
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Safety Agent Service
+  safety-agent:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.safety-agent
+    container_name: ztag-safety-agent
+    environment:
+      # Service configuration
+      SERVICE_NAME: safety-agent
+      HOST: 0.0.0.0
+      PORT: 8003
+
+      # Auth0 configuration
+      AUTH0_DOMAIN: ${AUTH0_DOMAIN}
+      AUTH0_CLIENT_ID: ${SAFETY_AGENT_CLIENT_ID}
+      AUTH0_CLIENT_SECRET: ${SAFETY_AGENT_CLIENT_SECRET}
+      AUTH0_AUDIENCE: ${AUTH0_AUDIENCE}
+
+      # OPA configuration
+      OPA_URL: http://opa:8181
+
+      # Certificate paths
+      MTLS_CA_CERT: /certs/root-ca/ca.crt
+      MTLS_CLIENT_CERT: /certs/safety-agent/client.crt
+      MTLS_CLIENT_KEY: /certs/safety-agent/client.key
+      MTLS_SERVER_CERT: /certs/safety-agent/server.crt
+      MTLS_SERVER_KEY: /certs/safety-agent/server.key
+
+      # DPoP key path
+      DPOP_PRIVATE_KEY_PATH: /keys/safety-agent-dpop.pem
+
+      # Signing key path
+      SIGNING_PRIVATE_KEY_PATH: /keys/safety-agent-signing.pem
+
+      # Logging
+      LOG_LEVEL: INFO
+    volumes:
+      - ../certificates:/certs:ro
+      - ../../keys:/keys:ro
+    networks:
+      - ztag-internal
+    depends_on:
+      - opa
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Permission Broker Service (externally exposed)
+  permission-broker:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.permission-broker
+    container_name: ztag-permission-broker
+    environment:
+      # Service configuration
+      SERVICE_NAME: permission-broker
+      HOST: 0.0.0.0
+      PORT: 8004
+
+      # Auth0 configuration
+      AUTH0_DOMAIN: ${AUTH0_DOMAIN}
+      AUTH0_CLIENT_ID: ${PERMISSION_BROKER_CLIENT_ID}
+      AUTH0_CLIENT_SECRET: ${PERMISSION_BROKER_CLIENT_SECRET}
+      AUTH0_AUDIENCE: ${AUTH0_AUDIENCE}
+      AUTH0_TOKEN_VAULT_URL: ${AUTH0_TOKEN_VAULT_URL}
+
+      # Identity Abstraction Layer (IAL) configuration
+      IDENTITY_PROVIDER: ${IDENTITY_PROVIDER}
+      IAL_AUTH0_DOMAIN: ${IAL_AUTH0_DOMAIN}
+      IAL_AUTH0_CLIENT_ID: ${IAL_AUTH0_CLIENT_ID}
+      IAL_AUTH0_CLIENT_SECRET: ${IAL_AUTH0_CLIENT_SECRET}
+      IAL_AUTH0_TOKEN_VAULT_URL: ${IAL_AUTH0_TOKEN_VAULT_URL}
+      IAL_AUTH0_TIMEOUT: ${IAL_AUTH0_TIMEOUT}
+
+      # Service URLs
+      SAFETY_AGENT_URL: https://safety-agent:8003
+      AUDIT_SERVICE_URL: http://audit:8006
+
+      # Certificate paths
+      MTLS_CA_CERT: /certs/root-ca/ca.crt
+      MTLS_CLIENT_CERT: /certs/permission-broker/client.crt
+      MTLS_CLIENT_KEY: /certs/permission-broker/client.key
+      MTLS_SERVER_CERT: /certs/permission-broker/server.crt
+      MTLS_SERVER_KEY: /certs/permission-broker/server.key
+
+      # DPoP key path
+      DPOP_PRIVATE_KEY_PATH: /keys/permission-broker-dpop.pem
+
+      # Signing key path
+      SIGNING_PRIVATE_KEY_PATH: /keys/permission-broker-signing.pem
+
+      # Verification keys (for Safety Agent and Intent Engine)
+      SAFETY_AGENT_PUBLIC_KEY_PATH: /keys/safety-agent-signing.pub
+      INTENT_ENGINE_PUBLIC_KEY_PATH: /keys/intent-engine-signing.pub
+
+      # Logging
+      LOG_LEVEL: INFO
+    volumes:
+      - ../certificates:/certs:ro
+      - ../../keys:/keys:ro
+    networks:
+      - ztag-internal
+    ports:
+      - "8004:8004"  # Expose permission-broker for client /authorize requests
+    depends_on:
+      - safety-agent
+      - audit
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Executor Agent Service
+  executor:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.executor
+    container_name: ztag-executor
+    environment:
+      # Service configuration
+      SERVICE_NAME: executor
+      HOST: 0.0.0.0
+      PORT: 8005
+
+      # Auth0 configuration
+      AUTH0_DOMAIN: ${AUTH0_DOMAIN}
+      AUTH0_CLIENT_ID: ${EXECUTOR_CLIENT_ID}
+      AUTH0_CLIENT_SECRET: ${EXECUTOR_CLIENT_SECRET}
+      AUTH0_AUDIENCE: ${AUTH0_AUDIENCE}
+
+      # Redis configuration
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-changeme}
+
+      # Service URLs
+      AUDIT_SERVICE_URL: https://audit:8006
+
+      # Certificate paths
+      MTLS_CA_CERT: /certs/root-ca/ca.crt
+      MTLS_CLIENT_CERT: /certs/executor/client.crt
+      MTLS_CLIENT_KEY: /certs/executor/client.key
+      MTLS_SERVER_CERT: /certs/executor/server.crt
+      MTLS_SERVER_KEY: /certs/executor/server.key
+
+      # DPoP key path
+      DPOP_PRIVATE_KEY_PATH: /keys/executor-dpop.pem
+
+      # Verification keys
+      PERMISSION_BROKER_PUBLIC_KEY_PATH: /keys/permission-broker-signing.pub
+
+      # Provider API endpoints (optional overrides)
+      GITHUB_API_URL: https://api.github.com
+      SLACK_API_URL: https://slack.com/api
+
+      # Logging
+      LOG_LEVEL: INFO
+    volumes:
+      - ../certificates:/certs:ro
+      - ../../keys:/keys:ro
+    networks:
+      - ztag-internal
+    depends_on:
+      - redis
+      - audit
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Audit Service
+  audit:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.audit
+    container_name: ztag-audit
+    environment:
+      # Service configuration
+      SERVICE_NAME: audit
+      HOST: 0.0.0.0
+      PORT: 8006
+
+      # Auth0 configuration
+      AUTH0_DOMAIN: ${AUTH0_DOMAIN}
+      AUTH0_CLIENT_ID: ${AUDIT_CLIENT_ID}
+      AUTH0_CLIENT_SECRET: ${AUDIT_CLIENT_SECRET}
+      AUTH0_AUDIENCE: ${AUTH0_AUDIENCE}
+
+      # Database configuration
+      DATABASE_URL: postgresql://audit_user:${POSTGRES_PASSWORD:-changeme}@postgres:5432/audit_logs
+
+      # Certificate paths
+      MTLS_CA_CERT: /certs/root-ca/ca.crt
+      MTLS_CLIENT_CERT: /certs/audit/client.crt
+      MTLS_CLIENT_KEY: /certs/audit/client.key
+      MTLS_SERVER_CERT: /certs/audit/server.crt
+      MTLS_SERVER_KEY: /certs/audit/server.key
+
+      # DPoP key path
+      DPOP_PRIVATE_KEY_PATH: /keys/audit-dpop.pem
+
+      # Genesis hash for hash chain
+      GENESIS_HASH: 0000000000000000000000000000000000000000000000000000000000000000
+
+      # Logging
+      LOG_LEVEL: INFO
+    volumes:
+      - ../certificates:/certs:ro
+      - ../../keys:/keys:ro
+    networks:
+      - ztag-internal
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8006/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  ztag-internal:
+    driver: bridge
+    internal: false  # Set to true for production to isolate internal services
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local

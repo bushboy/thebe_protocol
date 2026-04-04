@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\AppData\Roaming\Python\Python313\site-packages\sqlalchemy\orm\unitofwork.py
+# hypothesis_version: 6.151.9
+
+['%s(%s)', '%s(%s, isdelete=%s)', 'DeleteAll', 'DeleteState', 'PostUpdateAll', 'ProcessAll', 'ProcessState', 'SaveUpdateAll', 'append', 'append_wo_mutation', 'collection append', 'collection remove', 'dependency_processor', 'disabled', 'fromparent', 'history', 'isdelete', 'mapper', 'processed', 'remove', 'set', 'setup_flush_actions', 'sort_key', 'state']

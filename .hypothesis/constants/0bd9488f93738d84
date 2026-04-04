@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\services\planner\task_graph_generator.py
+# hypothesis_version: 6.151.9
+
+['action', 'allowed_providers', 'create branch', 'create doc', 'create pr', 'create_branch', 'create_doc', 'create_pr', 'dependencies', 'email', 'github', 'google_workspace', 'list channel', 'list repo', 'list_channels', 'list_repos', 'new branch', 'new document', 'notify', 'post message', 'provider', 'pull request', 'send email', 'send message', 'send_email', 'send_message', 'show channel', 'show repo', 'slack', 'task_id']

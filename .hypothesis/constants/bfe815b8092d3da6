@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\AppData\Roaming\Python\Python313\site-packages\botocore\__init__.py
+# hypothesis_version: 6.151.9
+
+['(.)([A-Z][a-z]+)', '([a-z0-9])([A-Z])', '-', '1.42.73', 'ExecutePartiQLBatch', 'SendWhatsAppMessage', '[A-Z]{2,}s$', '\\1', '\\2', '_', 'boolean', 'botocore', 'double', 'float', 'integer', 'string', 'timestamp']

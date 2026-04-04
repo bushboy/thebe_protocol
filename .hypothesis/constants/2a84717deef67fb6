@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\shared\identity\config_printer.py
+# hypothesis_version: 6.151.9
+
+['***', 'access_key', 'access_token', 'api_key', 'auth0', 'auth0_config', 'aws_secrets', 'aws_secrets_config', 'client_id', 'client_secret', 'domain', 'identity_provider', 'keycloak', 'keycloak_config', 'password', 'private_key', 'realm', 'refresh_token', 'region', 'scope_mapping', 'secret_key', 'secret_name_prefix', 'server_url', 'session_table_name', 'timeout', 'token_vault_url']

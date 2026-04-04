@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\shared\logging\json_logger.py
+# hypothesis_version: 6.151.9
+
+['INFO', 'Z', 'audit_event', 'correlation_id', 'event_type', 'exception', 'extra_fields', 'function', 'level', 'line', 'logger', 'message', 'module', 'timestamp']

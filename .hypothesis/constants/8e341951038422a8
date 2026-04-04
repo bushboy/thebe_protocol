@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\shared\identity\vault_factory.py
+# hypothesis_version: 6.151.9
+
+['auth0', 'auth0_config', 'aws_secrets', 'aws_secrets_config', 'client_id', 'client_secret', 'domain', 'keycloak', 'keycloak_config', 'realm', 'region', 'secret_name_prefix', 'server_url', 'session_table_name']

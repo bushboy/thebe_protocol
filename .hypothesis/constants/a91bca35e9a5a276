@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\AppData\Roaming\Python\Python313\site-packages\sqlalchemy\orm\base.py
+# hypothesis_version: 6.151.9
+
+[128, 256, 512, '.', '<%s at 0x%x>', '<%s>', 'DEFER_FOR_STATE', 'None', 'RAISE_FOR_STATE', 'SET_DEFERRED_EXPIRED', '_F', '_O', '_Self', '_T', '_T_co', '__dict__', '_sa_class_manager', '_sa_instance_state', 'is_aliased_class', 'manager.mapper', 'mapper', 'not_extension']

@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\AppData\Roaming\Python\Python313\site-packages\sqlalchemy\orm\bulk_persistence.py
+# hypothesis_version: 6.151.9
+
+['_O', '_can_use_returning', '_dml_strategy', '_emit_insert_mapper', '_emit_insert_table', '_emit_update_mapper', '_emit_update_table', '_eval_condition', '_matched_rows', '_populate_existing', '_sa_orm_load_options', '_subject_mapper', '_synchronize_session', 'aliased', 'auto', 'autoflush', 'bulk', 'can_use_returning', 'clause', 'core_only', 'delete', 'dml_strategy', 'entity', 'entity_namespace', 'evaluate', 'expr', 'fetch', 'identity_token', 'insert', 'is_delete_using', 'is_update_from', 'mapper', 'name', 'orm', 'parententity', 'plugin_subject', 'populate_existing', 'proxy_key', 'raw', 'render_nulls', 'synchronize_session', 'table', 'type', 'unspecified', 'update']

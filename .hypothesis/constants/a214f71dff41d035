@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\AppData\Roaming\Python\Python313\site-packages\boto3\compat.py
+# hypothesis_version: 6.151.9
+
+['.*boto3\\.compat', 'April 29, 2026', 'UNSET_DEFAULT', 'a', 'blog_link', 'date', 'ignore', 'mode', 'win']

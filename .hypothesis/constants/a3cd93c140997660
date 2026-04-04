@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\shared\identity\__init__.py
+# hypothesis_version: 6.151.9
+
+['VaultError', 'VaultProviderError', 'VaultTimeoutError', 'VaultValidationError']

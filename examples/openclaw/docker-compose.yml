@@ -1,0 +1,74 @@
+# Thebe Proxy — OpenClaw dev-mode quick start
+# ============================================
+# Starts only the lightweight proxy in THEBE_DEV_MODE=true.
+# No Auth0 credentials are required.
+#
+# Usage (from the repo root):
+#   docker compose -f examples/openclaw/docker-compose.yml up --build
+#
+# To connect the proxy to the FULL Agentic Guardian stack instead,
+# run both compose files together:
+#   docker compose \
+#     -f infra/docker/docker-compose.yml \
+#     -f examples/openclaw/docker-compose.yml \
+#     up --build
+# Then set THEBE_DEV_MODE=false and supply THEBE_GUARDIAN_BEARER_TOKEN.
+#
+# OpenClaw hook configuration (~/.openclaw/.env):
+#   THEBE_ENDPOINT=http://localhost:8000
+#   THEBE_API_KEY=demo-api-key
+#   THEBE_MIN_ALIGNMENT_SCORE=0.85
+
+services:
+
+  # ── Thebe Proxy ─────────────────────────────────────────────────────────────
+  # The single service OpenClaw's handler.ts talks to.
+  # Swap THEBE_DEV_MODE to "false" and add THEBE_GUARDIAN_BEARER_TOKEN to
+  # route evaluations through the full Guardian pipeline instead.
+  thebe-proxy:
+    build:
+      context: ../..
+      dockerfile: examples/openclaw/thebe-proxy/Dockerfile
+    container_name: thebe-proxy
+    restart: unless-stopped
+    ports:
+      - "${THEBE_PORT:-8000}:8000"
+    environment:
+      # ── Operating mode ────────────────────────────────────────────────────
+      # true  = lightweight heuristic inline (no Guardian services needed)
+      # false = full Guardian stack via Planner /plan-fast
+      THEBE_DEV_MODE: "${THEBE_DEV_MODE:-true}"
+
+      # ── Security ──────────────────────────────────────────────────────────
+      # Shared secret validated on every inbound request via X-Thebe-Key.
+      # Change this value before any non-local deployment.
+      THEBE_API_KEY: "${THEBE_API_KEY:-demo-api-key}"
+
+      # ── Intent alignment threshold ────────────────────────────────────────
+      THEBE_MIN_ALIGNMENT_SCORE: "${THEBE_MIN_ALIGNMENT_SCORE:-0.85}"
+
+      # ── Full-stack mode settings (THEBE_DEV_MODE=false only) ─────────────
+      # Internal service name when running alongside infra/docker compose.
+      THEBE_GUARDIAN_URL: "${THEBE_GUARDIAN_URL:-http://planner:8002}"
+      # Bearer token for authenticating with the Planner service.
+      THEBE_GUARDIAN_BEARER_TOKEN: "${THEBE_GUARDIAN_BEARER_TOKEN:-}"
+
+      LOG_LEVEL: "${LOG_LEVEL:-INFO}"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - thebe-net
+      # Uncomment when running alongside the full Guardian stack so the proxy
+      # can reach the Planner service on ztag-internal.
+      # - ztag-internal
+
+networks:
+  thebe-net:
+    driver: bridge
+  # Declare ztag-internal as external when composing with infra/docker.
+  # ztag-internal:
+  #   external: true

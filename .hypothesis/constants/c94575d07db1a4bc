@@ -1,0 +1,4 @@
+# file: C:\Users\tseli\source\python\agentic_guardian\shared\intent\pretty_printer.py
+# hypothesis_version: 6.151.9
+
+[0.7, ', ', '-', '=', 'ALIGNED', 'Intent Signature', 'MISALIGNED', 'Original Intent:', 'Proposed Action:', 'Similarity Analysis:']
