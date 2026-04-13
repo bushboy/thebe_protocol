@@ -55,5 +55,8 @@ class SafetyAgentConfig(BaseSettings):
     # Audit service URL
     audit_service_url: str = "https://audit:8005"
 
+    # Rules Management: shared store path (read by Safety Agent to honour SA rule toggles)
+    rules_store_path: Path = Path("/shared/rules_store.json")
+
 # Global config instance
 config = SafetyAgentConfig()

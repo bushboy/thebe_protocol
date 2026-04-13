@@ -5,6 +5,7 @@ This module implements policy evaluation against OPA and signing of approvals.
 Requirements: 7.1, 7.2, 7.3, 7.5
 """
 
+import json
 from datetime import datetime
 from typing import List, Dict, Any
 from cryptography.hazmat.primitives import hashes, serialization
@@ -60,6 +61,18 @@ class PolicyEvaluator:
         except Exception as e:
             logger.error(f"Failed to load signing key: {str(e)}")
             raise
+
+    def _load_rules_config(self) -> dict:
+        """Load SA-specific rule toggles from the shared rules_store.json.
+
+        Fails open: if the file is missing or malformed all SA rules are active.
+        """
+        try:
+            with open(config.rules_store_path, "r", encoding="utf-8") as fh:
+                store = json.load(fh)
+            return store.get("rules_config", {})
+        except Exception:
+            return {}
 
     def validate_requester_identity(
         self,
@@ -271,6 +284,9 @@ class PolicyEvaluator:
         """
         logger.info(f"Evaluating {len(task_graph)} tasks against policies")
 
+        rules_config = self._load_rules_config()
+        sa_disabled: set = set(rules_config.get("sa_disabled_rules", []))
+
         semantic_score = intent_signature.semantic_similarity_score
         semantic_threshold = (
             intent_signature.semantic_match_threshold
@@ -291,7 +307,7 @@ class PolicyEvaluator:
             logger.info(f"Evaluating task {task_id}: {action} on {provider}")
 
             # Check for dangerous patterns first (Requirement 13.2)
-            if self._check_for_dangerous_patterns(action):
+            if "sa-dangerous-patterns" not in sa_disabled and self._check_for_dangerous_patterns(action):
                 all_policies_passed = False
                 denial_reasons.append(
                     f"Action '{action}' contains dangerous patterns and is not allowed"
@@ -301,7 +317,7 @@ class PolicyEvaluator:
                 continue
 
             # Validate that this is a known safe action (Requirement 13.2)
-            if not self._is_known_safe_action(action, provider):
+            if "sa-action-whitelist" not in sa_disabled and not self._is_known_safe_action(action, provider):
                 all_policies_passed = False
                 denial_reasons.append(
                     f"Action '{action}' is not a recognized safe action for provider '{provider}'"
@@ -317,7 +333,7 @@ class PolicyEvaluator:
             # If action is not in allowed_actions, it's misaligned
             action_aligned = self._check_action_alignment(action, intent_signature)
 
-            if not action_aligned:
+            if "sa-intent-alignment-check" not in sa_disabled and not action_aligned:
                 all_policies_passed = False
                 if semantic_score is not None:
                     user_goal = context.get("user_goal", "original user goal")

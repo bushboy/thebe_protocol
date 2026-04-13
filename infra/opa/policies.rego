@@ -3,9 +3,40 @@ package agentic_guardian
 # Default decision is to deny
 default allow = false
 
+# ---------------------------------------------------------------------------
+# rules_config — populated by the Rules Management API via OPA data document.
+# Defaults ensure the policy works even before the API has pushed any data.
+# ---------------------------------------------------------------------------
+
+default_disabled_rules := set()
+default_spending_limits := {"aws": 100.0, "gcp": 100.0, "azure": 100.0}
+default_intent_threshold := 0.7
+
+disabled_rules := data.rules_config.disabled_rules if {
+    data.rules_config.disabled_rules
+} else := default_disabled_rules
+
+spending_limits := data.rules_config.spending_limits if {
+    data.rules_config.spending_limits
+} else := default_spending_limits
+
+intent_threshold := data.rules_config.intent_alignment_threshold if {
+    data.rules_config.intent_alignment_threshold
+} else := default_intent_threshold
+
+# custom_disabled_rules — used by dynamically deployed custom rule modules
+custom_disabled_rules := data.rules_config.custom_disabled_rules if {
+    data.rules_config.custom_disabled_rules
+} else := set()
+
+# ---------------------------------------------------------------------------
 # Collect all denial reasons
+# ---------------------------------------------------------------------------
+
+# --- GitHub: destructive actions ---
+
 deny[msg] {
-    # Destructive GitHub actions require admin role
+    not "deny_delete_branch" in disabled_rules
     input.action == "delete_branch"
     input.provider == "github"
     input.context.role != "admin"
@@ -13,6 +44,7 @@ deny[msg] {
 }
 
 deny[msg] {
+    not "deny_delete_repository" in disabled_rules
     input.action == "delete_repository"
     input.provider == "github"
     input.context.role != "admin"
@@ -20,68 +52,87 @@ deny[msg] {
 }
 
 deny[msg] {
+    not "deny_force_push" in disabled_rules
     input.action == "force_push"
     input.provider == "github"
     input.context.role != "admin"
     msg := "Destructive GitHub action 'force_push' requires admin role"
 }
 
+# --- Spending limits (configurable via rules_config) ---
+
 deny[msg] {
-    # Spending limits enforcement
+    not "deny_spending_aws" in disabled_rules
     input.action == "create_instance"
     input.provider == "aws"
-    input.estimated_cost > input.context.spending_limit
-    msg := sprintf("Action exceeds spending limit: $%.2f > $%.2f", [input.estimated_cost, input.context.spending_limit])
+    limit := spending_limits.aws
+    input.estimated_cost > limit
+    msg := sprintf("Action exceeds AWS spending limit: $%.2f > $%.2f", [input.estimated_cost, limit])
 }
 
 deny[msg] {
+    not "deny_spending_gcp" in disabled_rules
     input.action == "provision_resources"
     input.provider == "gcp"
-    input.estimated_cost > input.context.spending_limit
-    msg := sprintf("Action exceeds spending limit: $%.2f > $%.2f", [input.estimated_cost, input.context.spending_limit])
+    limit := spending_limits.gcp
+    input.estimated_cost > limit
+    msg := sprintf("Action exceeds GCP spending limit: $%.2f > $%.2f", [input.estimated_cost, limit])
 }
 
 deny[msg] {
+    not "deny_spending_azure" in disabled_rules
     input.action == "deploy_infrastructure"
     input.provider == "azure"
-    input.estimated_cost > input.context.spending_limit
-    msg := sprintf("Action exceeds spending limit: $%.2f > $%.2f", [input.estimated_cost, input.context.spending_limit])
+    limit := spending_limits.azure
+    input.estimated_cost > limit
+    msg := sprintf("Action exceeds Azure spending limit: $%.2f > $%.2f", [input.estimated_cost, limit])
 }
 
+# --- Action category allowlist ---
+
 deny[msg] {
-    # Allowed action categories enforcement
+    not "deny_action_category" in disabled_rules
     not action_category_allowed
     msg := sprintf("Action category '%s' is not in allowed categories for service '%s'", [input.action_category, input.context.service])
 }
 
+# --- Intent alignment threshold (configurable via rules_config) ---
+
 deny[msg] {
-    # Intent alignment threshold enforcement
-    input.intent_alignment_score < 0.7
-    msg := sprintf("Intent alignment score %.2f is below threshold 0.7", [input.intent_alignment_score])
+    not "deny_intent_alignment" in disabled_rules
+    input.intent_alignment_score < intent_threshold
+    msg := sprintf("Intent alignment score %.2f is below threshold %.2f", [input.intent_alignment_score, intent_threshold])
 }
 
-# Filesystem destructive operations protection
+# --- Filesystem destructive operations ---
+
 deny[msg] {
+    not "deny_destructive_filesystem" in disabled_rules
     is_destructive_filesystem_operation
     input.context.role != "admin"
     msg := sprintf("Destructive filesystem operation '%s' requires admin role", [input.action])
 }
 
 deny[msg] {
+    not "deny_destructive_filesystem" in disabled_rules
     is_destructive_filesystem_operation
     input.context.role == "admin"
     has_dangerous_scope
     msg := sprintf("Operation '%s' would affect critical system paths - denied: %v", [input.action, input.action_params.targets])
 }
 
-# System command safety rules
+# --- System commands ---
+
 deny[msg] {
+    not "deny_system_commands" in disabled_rules
     is_system_level_command
     msg := sprintf("System-level command '%s' is not allowed through Guardian", [input.action])
 }
 
-# Batch delete or mass destruction operations
+# --- Batch destructive operations ---
+
 deny[msg] {
+    not "deny_batch_destructive" in disabled_rules
     is_batch_destructive_operation
     msg := sprintf("Batch destructive operation '%s' is not permitted", [input.action])
 }
