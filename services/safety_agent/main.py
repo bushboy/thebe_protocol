@@ -13,6 +13,7 @@ from typing import List, Dict, Any
 from shared.schemas import IntentSignature, PolicyDecision
 from shared.logging import setup_logging, JSONLogger
 from shared.errors import setup_error_handlers, AuthorizationError
+from shared.pendo import track_event
 from .config import config
 from .policy_evaluator import PolicyEvaluator
 from .middleware import require_authentication
@@ -124,7 +125,21 @@ async def evaluate(
         logger.info(
             f"Policy evaluation complete for plan {request.plan_id}: {policy_decision.decision}"
         )
-        
+
+        await track_event(
+            "policy_evaluation_completed",
+            visitor_id=request.context.get("user_id", "system"),
+            properties={
+                "plan_id": request.plan_id,
+                "decision": policy_decision.decision,
+                "task_count": len(request.task_graph),
+                "evaluated_policies": ", ".join(policy_decision.evaluated_policies)[:500],
+                "denial_reasons": policy_decision.reason[:200] if policy_decision.decision == "DENY" else "",
+                "semantic_similarity_score": policy_decision.semantic_similarity_score,
+                "semantic_match_threshold": policy_decision.semantic_match_threshold,
+            },
+        )
+
         return EvaluateResponse(
             decision=policy_decision.decision,
             policy_approval=policy_decision

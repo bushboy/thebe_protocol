@@ -14,6 +14,7 @@ from contextlib import asynccontextmanager
 from shared.schemas import IntentSignature
 from shared.logging import setup_logging, JSONLogger
 from shared.errors import setup_error_handlers
+from shared.pendo import track_event
 from .config import config
 from .intent_signer import IntentSigner
 from .middleware import require_authentication
@@ -114,6 +115,17 @@ async def sign_intent(
 
         logger.info(f"Intent signature generated with hash: {intent_signature.hash}")
 
+        await track_event(
+            "intent_signature_generated",
+            properties={
+                "intent_hash": intent_signature.hash[:32],
+                "allowed_actions_count": len(request.allowed_actions),
+                "semantic_similarity_score": intent_signature.semantic_similarity_score,
+                "semantic_match_threshold": intent_signature.semantic_match_threshold,
+                "goal_length": len(request.user_goal),
+            },
+        )
+
         return SignIntentResponse(intent_signature=intent_signature)
 
     except ValueError as e:
@@ -160,6 +172,16 @@ async def verify_intent(
         logger.info(
             f"Intent verification complete: aligned={result['aligned']}, "
             f"similarity={result['similarity_score']:.3f}"
+        )
+
+        await track_event(
+            "intent_verification_completed",
+            properties={
+                "aligned": result["aligned"],
+                "similarity_score": result["similarity_score"],
+                "threshold": result["threshold"],
+                "proposed_action": request.proposed_action[:100],
+            },
         )
 
         return VerifyIntentResponse(**result)

@@ -16,6 +16,7 @@ import uuid
 from shared.schemas import ZeroTrustAuthorizationToken
 from shared.logging import setup_logging, JSONLogger
 from shared.action_params_hash import compute_action_params_hash
+from shared.pendo import track_event
 from shared.errors import (
     setup_error_handlers,
     TokenExpiredError,
@@ -144,6 +145,19 @@ async def execute(request: ExecuteRequest) -> ExecutionResult:
                 },
             )
 
+            await track_event(
+                "ztat_validation_failed",
+                properties={
+                    "plan_id": request.zt_at.plan_id,
+                    "task_id": request.zt_at.task_id,
+                    "action": request.zt_at.action,
+                    "provider": request.zt_at.provider,
+                    "failure_reason": str(e)[:200],
+                    "failure_type": "ztat_validation_error",
+                    "ztat_expires_at": str(request.zt_at.expires_at),
+                },
+            )
+
             # Determine appropriate error response
             if "expired" in str(e).lower():
                 raise TokenExpiredError(
@@ -177,6 +191,17 @@ async def execute(request: ExecuteRequest) -> ExecutionResult:
                     "failure_type": "replay_detected",
                     "reason": str(e),
                     "ztat_nonce": request.zt_at.nonce,
+                },
+            )
+
+            await track_event(
+                "replay_attack_detected",
+                properties={
+                    "plan_id": request.zt_at.plan_id,
+                    "task_id": request.zt_at.task_id,
+                    "action": request.zt_at.action,
+                    "provider": request.zt_at.provider,
+                    "ztat_nonce": request.zt_at.nonce[:32] if request.zt_at.nonce else "",
                 },
             )
 
@@ -236,6 +261,20 @@ async def execute(request: ExecuteRequest) -> ExecutionResult:
                     "received_action_params_hash": received_params_hash,
                 },
             )
+
+            await track_event(
+                "action_params_tampering_detected",
+                properties={
+                    "execution_id": execution_id,
+                    "plan_id": request.zt_at.plan_id,
+                    "task_id": request.zt_at.task_id,
+                    "action": request.zt_at.action,
+                    "provider": request.zt_at.provider,
+                    "expected_params_hash": expected_params_hash[:32],
+                    "received_params_hash": received_params_hash[:32],
+                },
+            )
+
             raise InvalidSignatureError(
                 message="Action parameters do not match authorized token",
                 details={
@@ -260,6 +299,18 @@ async def execute(request: ExecuteRequest) -> ExecutionResult:
                 f"{request.zt_at.provider}:{request.zt_at.action}"
             )
 
+            await track_event(
+                "action_executed_successfully",
+                properties={
+                    "execution_id": execution_id,
+                    "plan_id": request.zt_at.plan_id,
+                    "task_id": request.zt_at.task_id,
+                    "action": request.zt_at.action,
+                    "provider": request.zt_at.provider,
+                    "execution_status": execution_status,
+                },
+            )
+
         except ProviderExecutionError as e:
             logger.error(f"Provider execution failed: {str(e)}")
 
@@ -274,6 +325,18 @@ async def execute(request: ExecuteRequest) -> ExecutionResult:
                 status=execution_status,
                 result=result,
                 error=error_message
+            )
+
+            await track_event(
+                "action_execution_failed",
+                properties={
+                    "execution_id": execution_id,
+                    "plan_id": request.zt_at.plan_id,
+                    "task_id": request.zt_at.task_id,
+                    "action": request.zt_at.action,
+                    "provider": request.zt_at.provider,
+                    "error_message": error_message[:200],
+                },
             )
 
             raise ProviderAPIError(

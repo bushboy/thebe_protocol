@@ -6,8 +6,10 @@ Requirements: 5.3
 """
 
 import uuid
+import asyncio
 from typing import List, Dict, Any
 from shared.logging import JSONLogger
+from shared.pendo import track_event
 
 
 logger = JSONLogger(__name__)
@@ -98,6 +100,21 @@ class TaskGraphGenerator:
                     f"Guardian does not execute destructive operations through the Planner."
                 )
                 logger.warning(error_msg)
+
+                try:
+                    loop = asyncio.get_running_loop()
+                    loop.create_task(track_event(
+                        "task_plan_blocked",
+                        properties={
+                            "block_reason": error_msg[:200],
+                            "block_type": "destructive_keyword",
+                            "goal_length": len(user_goal),
+                            "detected_keyword": keyword,
+                        },
+                    ))
+                except RuntimeError:
+                    pass
+
                 raise ValueError(error_msg)
 
         # Explicitly reject tenant-scoped support-data retrieval/exfiltration goals.
@@ -122,6 +139,22 @@ class TaskGraphGenerator:
                 "Guardian requires explicit, policy-approved workflows for tenant data access."
             )
             logger.warning(error_msg)
+
+            detected = next((p for p in sensitive_data_patterns if p in goal_lower), "")
+            try:
+                loop = asyncio.get_running_loop()
+                loop.create_task(track_event(
+                    "task_plan_blocked",
+                    properties={
+                        "block_reason": error_msg[:200],
+                        "block_type": "sensitive_data_pattern",
+                        "goal_length": len(user_goal),
+                        "detected_keyword": detected,
+                    },
+                ))
+            except RuntimeError:
+                pass
+
             raise ValueError(error_msg)
 
         # Simple keyword-based task generation
@@ -233,6 +266,21 @@ class TaskGraphGenerator:
                 "Refusing to generate a plan for an ambiguous or unrecognized goal."
             )
             logger.warning(error_msg)
+
+            try:
+                loop = asyncio.get_running_loop()
+                loop.create_task(track_event(
+                    "task_plan_blocked",
+                    properties={
+                        "block_reason": error_msg[:200],
+                        "block_type": "unrecognized_goal",
+                        "goal_length": len(user_goal),
+                        "detected_keyword": "",
+                    },
+                ))
+            except RuntimeError:
+                pass
+
             raise ValueError(error_msg)
 
         # Convert to dictionary format

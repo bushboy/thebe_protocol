@@ -17,6 +17,7 @@ from ..models import (
 )
 from ..opa_manager import OPAError, OPAManager
 from ..store import RulesStore
+from shared.pendo import track_event
 
 router = APIRouter(prefix="/rules/system", tags=["System Rules"])
 
@@ -146,6 +147,17 @@ async def toggle_system_rule(
             ).model_dump(),
         ) from exc
 
+    await track_event(
+        "system_rule_toggled",
+        properties={
+            "rule_id": rule_id,
+            "rule_name": manifest.name[:100],
+            "enabled": body.enabled,
+            "category": manifest.category or "",
+            "modified_by": "api",
+        },
+    )
+
     return _merge_rule_response(rule_id, store)
 
 
@@ -270,6 +282,18 @@ async def update_system_rule_params(
             ).model_dump(),
         ) from exc
 
+    await track_event(
+        "system_rule_params_updated",
+        properties={
+            "rule_id": rule_id,
+            "rule_name": manifest.name[:100],
+            "updated_params": ", ".join(validated.keys())[:200],
+            "param_count": len(validated),
+            "category": manifest.category or "",
+            "modified_by": "api",
+        },
+    )
+
     return _merge_rule_response(rule_id, store)
 
 
@@ -338,5 +362,14 @@ async def initialize_system_policy(
                 message=str(exc),
             ).model_dump(),
         ) from exc
+
+    await track_event(
+        "system_policy_initialized",
+        properties={
+            "rule_count": len(rule_block_map),
+            "guards_injected": results.get("injected", 0) if isinstance(results, dict) else 0,
+            "already_present_count": results.get("already_present", 0) if isinstance(results, dict) else 0,
+        },
+    )
 
     return {"status": "ok", "results": results}

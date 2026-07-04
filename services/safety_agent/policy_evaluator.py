@@ -6,6 +6,7 @@ Requirements: 7.1, 7.2, 7.3, 7.5
 """
 
 import json
+import asyncio
 from datetime import datetime
 from typing import List, Dict, Any
 from cryptography.hazmat.primitives import hashes, serialization
@@ -16,6 +17,7 @@ import base64
 from shared.schemas import PolicyDecision, IntentSignature
 from shared.opa import OPAClient, OPAError
 from shared.logging import JSONLogger
+from shared.pendo import track_event
 from .config import config
 
 
@@ -314,6 +316,21 @@ class PolicyEvaluator:
                 )
                 evaluated_policies.append(f"dangerous_patterns_check_{action}")
                 logger.warning(f"Dangerous pattern detected in task {task_id}: {action}")
+
+                try:
+                    loop = asyncio.get_running_loop()
+                    loop.create_task(track_event(
+                        "dangerous_pattern_detected",
+                        visitor_id=context.get("user_id", "system"),
+                        properties={
+                            "task_id": task_id,
+                            "action": action[:100],
+                            "provider": provider,
+                        },
+                    ))
+                except RuntimeError:
+                    pass
+
                 continue
 
             # Validate that this is a known safe action (Requirement 13.2)
@@ -352,6 +369,24 @@ class PolicyEvaluator:
                     f"Intent misalignment detected for task {task_id}: "
                     f"action '{action}' not in allowed actions"
                 )
+
+                try:
+                    loop = asyncio.get_running_loop()
+                    loop.create_task(track_event(
+                        "intent_misalignment_detected",
+                        visitor_id=context.get("user_id", "system"),
+                        properties={
+                            "task_id": task_id,
+                            "action": action[:100],
+                            "provider": provider,
+                            "semantic_score": semantic_score,
+                            "semantic_threshold": semantic_threshold,
+                            "allowed_actions": ", ".join(intent_signature.allowed_actions)[:200],
+                        },
+                    ))
+                except RuntimeError:
+                    pass
+
                 continue
 
             # Construct OPA input
