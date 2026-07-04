@@ -15,6 +15,7 @@ import uuid
 from shared.schemas import IntentSignature, PolicyDecision
 from shared.logging import setup_logging, JSONLogger
 from shared.errors import setup_error_handlers, ServiceUnavailableError
+from shared.pendo import track_event
 from .config import config
 from .task_graph_generator import TaskGraphGenerator
 from .intent_engine_client import IntentEngineClient
@@ -158,6 +159,18 @@ async def create_plan(
 
         logger.info(f"Plan {plan_id} created successfully with intent signature")
 
+        await track_event(
+            "task_plan_created",
+            visitor_id=request.user_id,
+            properties={
+                "plan_id": plan_id,
+                "task_count": len(task_graph_items),
+                "allowed_actions": ", ".join(allowed_actions)[:500],
+                "providers_used": ", ".join({t["provider"] for t in task_graph}),
+                "user_goal_length": len(request.user_goal),
+            },
+        )
+
         return PlanResponse(
             plan_id=plan_id,
             task_graph=task_graph_items,
@@ -280,6 +293,19 @@ async def create_plan_fast(
             )
 
         task_graph_items = [TaskGraphItem(**task) for task in task_graph]
+
+        await track_event(
+            "fast_plan_pipeline_completed",
+            visitor_id=request.user_id,
+            properties={
+                "plan_id": plan_id,
+                "pipeline_latency_ms": round(pipeline_latency_ms, 2),
+                "blocked": blocked,
+                "block_reason": block_reason[:200] if block_reason else "",
+                "task_count": len(task_graph_items),
+                "policy_decision": policy_decision.decision if policy_decision else "",
+            },
+        )
 
         return FastPlanResponse(
             plan_id=plan_id,

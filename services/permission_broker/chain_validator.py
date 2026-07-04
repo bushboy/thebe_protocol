@@ -14,8 +14,11 @@ from cryptography import x509
 from pathlib import Path
 from typing import Optional
 
+import asyncio
+
 from shared.schemas import PolicyDecision, IntentSignature
 from shared.logging import JSONLogger
+from shared.pendo import track_event
 from .config import config
 
 
@@ -219,3 +222,18 @@ class AuthorizationChainValidator:
         self.validate_intent_signature(intent_signature, action)
 
         logger.info("Complete authorization chain validated successfully")
+
+        try:
+            loop = asyncio.get_running_loop()
+            loop.create_task(track_event(
+                "authorization_chain_validated",
+                properties={
+                    "action": action[:100],
+                    "policy_decision": policy_approval.decision,
+                    "signer_identity": policy_approval.signer_identity[:100] if policy_approval.signer_identity else "",
+                    "allowed_actions_count": len(intent_signature.allowed_actions),
+                    "embedding_dimensionality": len(intent_signature.embedding),
+                },
+            ))
+        except RuntimeError:
+            pass

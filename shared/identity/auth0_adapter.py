@@ -22,6 +22,7 @@ from .retry import with_retry
 from .metrics import record_metrics, record_revoke_session_metrics
 from shared.schemas.models import RichAuthorizationRequest
 from shared.logging import JSONLogger
+from shared.pendo import track_event
 
 
 logger = JSONLogger(__name__)
@@ -224,12 +225,26 @@ class Auth0Adapter(IVaultProvider):
 
                 logger.info(f"Provider token obtained successfully for {provider}")
 
+                result_scope = token_data.get("scope", " ".join(rar.actions))
+
+                await track_event(
+                    "provider_token_acquired",
+                    properties={
+                        "provider": provider,
+                        "identity_provider": "auth0",
+                        "token_type": token_data.get("token_type", "Bearer"),
+                        "expires_in": expires_in,
+                        "scope": result_scope[:200],
+                        "grant_type": "client_credentials",
+                    },
+                )
+
                 # Return normalized token response
                 return {
                     "access_token": token_data["access_token"],
                     "token_type": token_data.get("token_type", "Bearer"),
                     "expires_in": expires_in,
-                    "scope": token_data.get("scope", " ".join(rar.actions))
+                    "scope": result_scope
                 }
 
         except httpx.TimeoutException:
@@ -310,6 +325,16 @@ class Auth0Adapter(IVaultProvider):
 
                 logger.info(f"Token exchanged successfully for {provider}")
 
+                await track_event(
+                    "token_exchange_completed",
+                    properties={
+                        "provider": provider,
+                        "identity_provider": "auth0",
+                        "new_scopes": " ".join(new_scopes)[:200],
+                        "expires_in": token_data.get("expires_in", 3600),
+                    },
+                )
+
                 return {
                     "access_token": token_data["access_token"],
                     "token_type": token_data.get("token_type", "Bearer"),
@@ -369,6 +394,15 @@ class Auth0Adapter(IVaultProvider):
                     logger.info("Session revoked successfully")
                 else:
                     logger.warning(f"Session revocation returned status {response.status_code}")
+
+                await track_event(
+                    "session_revoked",
+                    properties={
+                        "identity_provider": "auth0",
+                        "success": success,
+                        "response_status_code": response.status_code,
+                    },
+                )
 
                 return success
 

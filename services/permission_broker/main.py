@@ -16,6 +16,7 @@ import uuid
 from shared.schemas import PolicyDecision, IntentSignature, ZeroTrustAuthorizationToken
 from shared.logging import setup_logging, JSONLogger
 from shared.errors import setup_error_handlers
+from shared.pendo import track_event
 from shared.identity.vault_factory import VaultFactory
 from shared.identity.ivault_provider import IVaultProvider
 from shared.identity.exceptions import (
@@ -258,6 +259,18 @@ async def authorize(
                 },
             )
 
+            await track_event(
+                "authorization_denied",
+                properties={
+                    "plan_id": request.plan_id,
+                    "task_id": request.task_id,
+                    "action": request.action,
+                    "provider": request.provider,
+                    "failure_type": "chain_validation_error",
+                    "failure_reason": str(e)[:200],
+                },
+            )
+
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail={
@@ -429,6 +442,18 @@ async def authorize(
         provider_token = ProviderToken(**provider_token_data)
 
         logger.info(f"Authorization successful for plan: {request.plan_id}, task: {request.task_id}")
+
+        await track_event(
+            "authorization_granted",
+            properties={
+                "plan_id": request.plan_id,
+                "task_id": request.task_id,
+                "action": request.action,
+                "provider": request.provider,
+                "ztat_nonce": ztat.nonce[:32] if ztat.nonce else "",
+                "expires_at": str(ztat.expires_at),
+            },
+        )
 
         return AuthorizeResponse(
             zt_at=ztat,

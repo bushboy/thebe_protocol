@@ -20,6 +20,7 @@ from ..models import (
 from ..opa_manager import OPAError, OPAManager
 from ..store import RulesStore
 from ..transpiler import RegoTranspiler, TranspileError
+from shared.pendo import track_event
 
 router = APIRouter(prefix="/rules/custom", tags=["Custom Rules"])
 
@@ -204,6 +205,18 @@ async def test_rule(
     allow: bool = opa_decision.get("allow", True)
     deny_reasons: list[str] = list(opa_decision.get("deny_reasons", []))
 
+    await track_event(
+        "rule_test_executed",
+        properties={
+            "rule_mode": body.mode.value if hasattr(body.mode, "value") else str(body.mode),
+            "valid": True,
+            "allow": allow,
+            "deny_reasons_count": len(deny_reasons),
+            "validation_errors_count": 0,
+            "has_sample_input": body.sample_input is not None,
+        },
+    )
+
     return TestRuleResponse(
         generated_rego=generated_rego,
         opa_decision=opa_decision,
@@ -307,6 +320,18 @@ async def create_custom_rule(
                 ).model_dump(),
             ) from exc
 
+    await track_event(
+        "custom_rule_created",
+        properties={
+            "rule_id": rule_id,
+            "rule_name": body.name[:100],
+            "rule_mode": body.mode.value if hasattr(body.mode, "value") else str(body.mode),
+            "category": body.category or "",
+            "enabled": body.enabled,
+            "opa_policy_id": opa_id,
+        },
+    )
+
     return _to_response(rule)
 
 
@@ -394,6 +419,19 @@ async def update_custom_rule(
             ).model_dump(),
         ) from exc
 
+    previous_mode = existing.mode.value if hasattr(existing.mode, "value") else str(existing.mode)
+    await track_event(
+        "custom_rule_updated",
+        properties={
+            "rule_id": rule_id,
+            "rule_name": body.name[:100],
+            "rule_mode": body.mode.value if hasattr(body.mode, "value") else str(body.mode),
+            "category": body.category or "",
+            "enabled": body.enabled,
+            "previous_mode": previous_mode,
+        },
+    )
+
     return _to_response(updated_rule)
 
 
@@ -441,6 +479,16 @@ async def toggle_custom_rule(
                 message=f"Toggle saved but OPA sync failed: {exc}",
             ).model_dump(),
         ) from exc
+
+    await track_event(
+        "custom_rule_toggled",
+        properties={
+            "rule_id": rule_id,
+            "rule_name": rule.name[:100] if rule.name else "",
+            "enabled": body.enabled,
+            "category": rule.category or "",
+        },
+    )
 
     return _to_response(rule)
 
@@ -493,3 +541,14 @@ async def delete_custom_rule(
                 message=str(exc),
             ).model_dump(),
         ) from exc
+
+    await track_event(
+        "custom_rule_deleted",
+        properties={
+            "rule_id": rule_id,
+            "rule_name": rule.name[:100] if rule.name else "",
+            "rule_mode": rule.mode.value if hasattr(rule.mode, "value") else str(rule.mode),
+            "category": rule.category or "",
+            "opa_policy_id": rule.opa_policy_id or "",
+        },
+    )

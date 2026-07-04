@@ -15,6 +15,7 @@ from datetime import datetime
 from shared.schemas import AuditLogEntry, ZeroTrustAuthorizationToken
 from shared.logging import setup_logging, JSONLogger
 from shared.errors import setup_error_handlers, AuditIntegrityError
+from shared.pendo import track_event
 from .config import config
 from .log_storage import LogStorage
 from .chain_verifier import ChainVerifier
@@ -119,7 +120,18 @@ async def log_entry(request: LogRequest) -> LogResponse:
             f"Successfully logged entry: {audit_entry.log_id} "
             f"(hash: {audit_entry.hash[:16]}...)"
         )
-        
+
+        await track_event(
+            "audit_entry_logged",
+            properties={
+                "log_id": audit_entry.log_id,
+                "component": request.component,
+                "event_type": request.event_type,
+                "entry_hash": audit_entry.hash[:32],
+                "previous_hash": audit_entry.previous_hash[:32] if audit_entry.previous_hash else "",
+            },
+        )
+
         return LogResponse(
             log_id=audit_entry.log_id,
             hash=audit_entry.hash,
@@ -168,6 +180,20 @@ async def verify_chain() -> VerifyResponse:
                 f"Chain verification failed: broken at index {result.broken_index}"
             )
         
+        tampered_count = len(result.tampered_indices) if result.tampered_indices else 0
+
+        await track_event(
+            "audit_chain_verification_completed",
+            properties={
+                "chain_valid": result.is_valid,
+                "total_entries": result.total_entries,
+                "broken_index": result.broken_index,
+                "tampered_indices_count": tampered_count,
+                "first_hash": result.first_hash[:32] if result.first_hash else "",
+                "last_hash": result.last_hash[:32] if result.last_hash else "",
+            },
+        )
+
         return VerifyResponse(
             chain_valid=result.is_valid,
             total_entries=result.total_entries,
@@ -230,7 +256,20 @@ async def get_logs(
         # Apply limit
         total_count = len(entries)
         entries = entries[:limit]
-        
+
+        filter_type = "plan_id" if plan_id else ("component" if component else "none")
+        await track_event(
+            "audit_logs_queried",
+            properties={
+                "filter_type": filter_type,
+                "plan_id": plan_id or "",
+                "component": component or "",
+                "limit": limit,
+                "total_count": total_count,
+                "returned_count": len(entries),
+            },
+        )
+
         return LogsResponse(
             logs=entries,
             total_count=total_count
